@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang='zh-cn'>
+<head>
+<meta charset='utf-8'>
+<!-- <meta name="viewport" content="width=1240, initial-scale=0.5, maximum-scale=1.0, user-scalable=0"> -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimal-ui">
+<link rel="stylesheet" href="css/bootstrap.min.css" >
+<link rel='stylesheet' type='text/css' href='css/student.css'>
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<link href="css/sweetalert.css" rel="stylesheet">
+<!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> -->
+<title>华北电力大学学生选课系统</title>
+</head>
+<body>
+    <div class="jumbotron">
+        <img src='images/main.jpg'/>
+    </div>
+    <div id='main_full'>
+        <div id='main_page'>
+            <div id='left_list'>
+                <div class="list-group">
+                    <a href="/student_xuanke" class="list-group-item list-group-item-success">学生选课</a>
+                    <a href="/student_kecheng" class="list-group-item list-group-item-info">查看课程</a>
+                    <a href="/student_xinxixiugai" class="list-group-item list-group-item-warning">修改个人信息</a>
+                    <a href="/" class="list-group-item list-group-item-danger">退出登录</a>
+                </div>
+            </div>
+            <div id='xuanke_page'>
+                    <div class="clear"></div>
+                        <input id='class_id' type="text" class="form-control input-lg" name="class_id" value="" placeholder="请输入课程名称">
+                        <button id='xuanke_success' type="submit" class="btn btn-success btn-lg btn-block" role="button"><b>查询</b></button>
+                </div>
+            <table id='kecheng_show' class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>课程号</th>
+                        <th>课程名</th>
+                        <th>学分</th>
+                        <th>上课时间</th>
+                        <th>上课教室</th>
+                        <th>上课教师</th>
+                    </tr>
+                </thead>
+                <tbody id='getAllCourse'>
+                    
+                </tbody>
+            </table>
+        </div>
+        <div class="clear"></div>
+    </div>
+<script src='jq/jquery-3.1.1.min.js'></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/sweetalert.min.js"></script>
+<script src="js/index.js"></script>
+<script src='js/underscore-noflect.js'></script>
+
+<script type="text/template" id="allCourse">
+    
+        <tr>
+            <td>{{= class_id }}</td>
+            <td>{{= class_name }}</td>
+            <td>{{= class_score }}</td>
+            <td>{{= class_time }}</td>
+            <td>{{= class_room }}</td>
+            <td>{{= class_teacher }}</td>
+         </tr>
+    
+</script>
+
+<script type="text/javascript">
+    var getAllCourse = $('#getAllCourse');
+    //得到模板
+    var compiled = _.template($("#allCourse").html());
+    getPage();
+    //AJAX读取文章列表
+    function getPage() {
+        $.post('/get_course',function (result) {
+            for(var i = 0; i<result.allResult.length; i++){
+                var htmlstring = compiled(result.allResult[i]);
+                getAllCourse.append(htmlstring);
+            }
+        });
+    }
+
+
+    //根据课程名模糊查询
+    $('#xuanke_success').click(function(){
+        var class_name=$('#class_id').val();
+        $.post('/student_chaxun_course',{
+            'class_name':class_name
+        },function(result){
+            getAllCourse.html('')
+            for(var i = 0; i<result.allResult.length; i++){
+                var htmlstring = compiled(result.allResult[i]);
+                getAllCourse.append(htmlstring);
+            }
+        })
+    })
+
+
+
+    //清除session
+    $('.list-group-item-danger').click(function(){
+        $.post('/clear_session')
+    })
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang='zh-cn'>
+<head>
+<meta charset='utf-8'>
+<!-- <meta name="viewport" content="width=1240, initial-scale=0.5, maximum-scale=1.0, user-scalable=0"> -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimal-ui">
+<link rel="stylesheet" href="css/bootstrap.min.css" >
+<link rel='stylesheet' type='text/css' href='css/teacher.css'>
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<link href="css/sweetalert.css" rel="stylesheet">
+<!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> -->
+<title>华北电力大学学生选课系统</title>
+</head>
+<body>
+    <div class="jumbotron">
+        <img src='images/main.jpg'/>
+    </div>
+    <div id='main_full'>
+        <div id='main_page'>
+            <div id='left_list'>
+                <div class="list-group">
+                    <a href="/teacher_course" class="list-group-item list-group-item-success">选课情况</a>
+                    <a href="/teacher_xinxixiugai" class="list-group-item list-group-item-warning">修改个人信息</a>
+                    <a href="/" class="list-group-item list-group-item-danger">退出登录</a>
+                </div>
+            </div>
+            <div id='xiugai_page'>
+                <div class="clear"></div>
+                <span>教工号</span><input id='id' type="text" class="form-control input-lg" name="id" disabled="true" value="" placeholder="学号" >
+                <span>姓名</span><input id='name' type="text" class="form-control input-lg" name="name" value="" placeholder="姓名" >
+                <span>职称</span><input id='rank' type="text" class="form-control input-lg" name="class" value="" placeholder="职称">
+                <span>密码</span><input id='password' type="text" class="form-control input-lg" name="password" value="" placeholder="密码">
+                <button id='save_success' type="submit" class="btn btn-success btn-lg btn-block" role="button"><b>保存</b></button>
+            </div>
+
+        </div>
+    </div>
+<script src='jq/jquery-3.1.1.min.js'></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/sweetalert.min.js"></script>
+<script src="js/index.js"></script>
+<script src='js/underscore-noflect.js'></script>
+
+
+<script>
+    $.post('/teacher_search_by_session',function(result){
+        $('#id').val(result[0].id);
+        $('#name').val(result[0].name);
+        $('#rank').val(result[0].rank);
+        $('#password').val(result[0].password);
+    })
+
+    $('#save_success').click(function(){
+        $.post('/teacher_xinxigengxin',{
+            'id':$('#id').val(),
+            "name" : $("#name").val(),
+            "rank" : $("#rank").val(),
+            "password" : $("#password").val()
+        },function(result){
+            if(result==1){
+                swal("恭喜!", "信息修改成功!", "success");
+                $('.confirm').click(function(){
+                    window.location.href = "/teacher_xinxixiugai";
+                })
+            }
+        })
+    })
+
+    //清除session
+    $('.list-group-item-danger').click(function(){
+        $.post('/clear_session')
+    })
+</script>
+
+</body>
+</html>

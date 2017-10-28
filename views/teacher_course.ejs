@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang='zh-cn'>
+<head>
+<meta charset='utf-8'>
+<!-- <meta name="viewport" content="width=1240, initial-scale=0.5, maximum-scale=1.0, user-scalable=0"> -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimal-ui">
+<link rel="stylesheet" href="css/bootstrap.min.css" >
+<link rel='stylesheet' type='text/css' href='css/teacher.css'>
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<link href="css/sweetalert.css" rel="stylesheet">
+<!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> -->
+<title>华北电力大学学生选课系统</title>
+</head>
+<body>
+    <div class="jumbotron">
+        <img src='images/main.jpg'/>
+    </div>
+    <div id='main_full'>
+        <div id='main_page'>
+            <div id='left_list'>
+                <div class="list-group">
+                    <a href="/teacher_course" class="list-group-item list-group-item-success">选课情况</a>
+                    <a href="/teacher_xinxixiugai" class="list-group-item list-group-item-warning">修改个人信息</a>
+                    <a href="/" class="list-group-item list-group-item-danger">退出登录</a>
+                </div>
+            </div>
+            
+            <table id='kecheng_yixuan' class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>课程号</th>
+                            <th>课程名</th>
+                            <th>学号</th>
+                            <th>学生姓名</th>
+                            <th>成绩</th>
+                            <th>修改成绩</th>
+                        </tr>
+                    </thead>
+                    <tbody id='student_all_course'>
+                    
+                    </tbody>
+             </table>
+            <div id='xuanke_page'>
+                <div class="clear"></div>
+                    <!-- <input id='class_id' type="text" class="form-control input-lg" name="class_id" value="" placeholder="请输入课程号"> -->
+                    <button id='save_score' type="submit" class="btn btn-success btn-lg btn-block" role="button"><b>保存</b></button>
+            </div>
+        </div>
+    </div>
+<script src='jq/jquery-3.1.1.min.js'></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/sweetalert.min.js"></script>
+<script src="js/index.js"></script>
+<script src='js/underscore-noflect.js'></script>
+
+<script type="text/template" id="student_course">
+        <tr>
+            <td>{{= class_id    }}</td>
+            <td>{{= class_name  }}</td>
+            <td>{{= id }}</td>
+            <td>{{= name  }}</td>
+            <td>{{= score  }}</td>
+            <td><input type="text" class="score form-control input-sm" name="score" value="" placeholder="分数" ></td>
+         </tr>
+
+         
+    
+</script>
+
+<script>
+    //用来记录是否重复输出
+    var old_course=[];
+
+    var student_all_course = $('#student_all_course');
+    //得到模板
+    var compiled = _.template($("#student_course").html());
+    
+    $.post('/teacher_score',function(result){
+        for(var i = 0; i<result.allResult.length; i++){
+            var htmlstring = compiled(result.allResult[i]);
+            student_all_course.append(htmlstring);
+        }
+    })
+
+
+    $('#save_score').click(function(){
+        var class_id=[];
+        var id=[];
+        var score=[];
+        $('.score').each(function(){
+            class_id.push($(this).parent().prevAll('td:last').html());
+            id.push($(this).parent().prevAll('td:nth-child(3)').html());
+            score.push($(this).val());
+        });
+        for(let i=0;i<score.length;i++){
+            if(score[i]=='')  continue;
+            let class_id_temp=class_id[i];
+            let id_temp=id[i];
+            let score_temp=score[i];
+            console.log(class_id_temp+'  '+id_temp+'  '+score_temp)
+            $.post('/score_save',{
+                'class_id':class_id_temp,
+                'id':id_temp,
+                'score':score_temp
+            },function(result){
+                if(result==1){
+                    swal("恭喜!", "成绩修改成功!", "success");
+                    $('.confirm').click(function(){
+                    window.location.href = "/teacher_course";
+                })
+                }
+            })
+        }
+    })
+
+
+    $('#kecheng_yixuan').on("click","#shanchu_student", function() {
+        let class_id=$(this).parent().prevAll('td:last').html();
+        let name=$(this).parent().prevAll('td:first').html();
+        $.post('/teacher_delete_student',{
+            'class_id':class_id,
+            'name':name
+        },function(result){
+            if(result==1){
+                swal("恭喜!", "删除成功!", "success");
+                $('.confirm').click(function(){
+                    window.location.href = "/teacher_course";
+                })
+            }
+        })
+    })
+
+    //清除session
+    $('.list-group-item-danger').click(function(){
+        $.post('/clear_session')
+    })
+</script>
+
+</body>
+</html>

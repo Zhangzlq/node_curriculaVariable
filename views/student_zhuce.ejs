@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang='zh-cn'>
+<head>
+<meta charset='utf-8'>
+<!-- <meta name="viewport" content="width=1240, initial-scale=0.5, maximum-scale=1.0, user-scalable=0"> -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimal-ui">
+<link rel="stylesheet" href="css/bootstrap.min.css" >
+<link rel='stylesheet' type='text/css' href='css/login.css'>
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<link href="css/sweetalert.css" rel="stylesheet">
+<!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> -->
+<title>华北电力大学学生选课系统</title>
+</head>
+<body>
+    <div class="jumbotron">
+        <img src='images/main.jpg'/>
+    </div>
+    <div id='signup_full'>
+        <div id='signup_page'>
+            <h1>华北电力大学选课系统</h1>
+			<h2>学生注册</h2>
+			<input id='id' type="text" class="form-control input-lg" name="id" value="" placeholder="学号" >
+            <input id='name' type="text" class="form-control input-lg" name="name" value="" placeholder="姓名" >
+            <input id='class' type="text" class="form-control input-lg" name="class" value="" placeholder="班级">
+            <input id='sex' type="text" class="form-control input-lg" name="sex" value="" placeholder="性别">
+            <input id='password' type="password" class="form-control input-lg" name="password" value="" placeholder="密码">
+            <input id='cpassword' type="password" class="form-control input-lg" name="cpassword" value="" placeholder="密码二次确认">
+            <div id='signup_email'>
+                    <div class="checkbox">
+                        <img src='images/yes.png'/>
+                    </div>
+                    <p>我同意<a href='#'>《法律声明和隐私权政策》</a></p>
+
+            </div>
+            <div class='clear'></div>
+            <button id='student_zhuce_success' type="submit" class="btn btn-success btn-lg btn-block" role="button"><b>注册账号</b></button>
+            <div class="clear"></div>
+            <div id='signup_statement'>
+                <p id='signup_statement_account'>您已经有账号了？ <a href='/student_denglu'>登录</a></p>
+            </div>
+            
+        </div>
+    </div>
+<script src='jq/jquery-3.1.1.min.js'></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/sweetalert.min.js"></script>
+<script src="js/index.js"></script>
+
+<script>
+//注册email勾选
+let seleted=false;
+	$('.checkbox').click(function(){
+		if(!seleted){
+			$('.checkbox img').animate({'opacity':'1'},200);
+			seleted=true;
+		}
+		else{
+			$('.checkbox img').animate({'opacity':'0'},200);
+			seleted=false;
+		}
+	})
+
+
+	$("#student_zhuce_success").click(function () {
+		if($('#id').val()==''){
+			swal({
+				title: "Error!",
+				text: "请输入学号",
+				type: "error",
+				confirmButtonText: "Cool"
+			});
+		}else if($('#name').val()==''){
+			swal({
+				title: "Error!",
+				text: "请输入姓名",
+				type: "error",
+				confirmButtonText: "Cool"
+			});
+		}else if($('#class').val()==''){
+			swal({
+				title: "Error!",
+				text: "请输入班级",
+				type: "error",
+				confirmButtonText: "Cool"
+			});
+		}else if($('#sex').val()==''){
+			swal({
+				title: "Error!",
+				text: "请输入性别",
+				type: "error",
+				confirmButtonText: "Cool"
+			});
+		}else if($('#password').val()==''){
+			swal({
+				title: "Error!",
+				text: "请输入密码",
+				type: "error",
+				confirmButtonText: "Cool"
+			});
+		}else if($('#cpassword').val()==''){
+			swal({
+				title: "Error!",
+				text: "请输入确认密码",
+				type: "error",
+				confirmButtonText: "Cool"
+			});
+		}else if($('#password').val()!=$('#cpassword').val()){
+			swal({
+				title: "Error!",
+				text: "两次输入的密码不一致",
+				type: "error",
+				confirmButtonText: "Cool"
+			});
+		}else if(!seleted){
+			swal({
+				title: "Error!",
+				text: "请同意《法律声明和隐私权政策》",
+				type: "error",
+				confirmButtonText: "Cool"
+			});
+		}else{
+        //用ajax提交表单
+            $.post("/do_student_zhuce",{
+				'id':$('#id').val(),
+                "name" : $("#name").val(),
+                "class" : $("#class").val(),
+                "sex" : $("#sex").val(),
+                "password" : $("#password").val()
+            },function (result) {
+                if(result == "1"){
+                    swal("恭喜!", "您已经注册成功!", "success");
+                    $('.confirm').click(function(){
+                        window.location.href = "/";
+                    })
+                }else{
+                    swal({
+						title: "Error!",
+						text: "该学号已注册",
+						type: "error",
+						confirmButtonText: "Cool"
+					});
+                }
+            });
+		}
+	});
+
+
+
+
+</script>
+
+</body>
+</html>

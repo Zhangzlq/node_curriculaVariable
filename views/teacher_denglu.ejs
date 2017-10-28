@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang='zh-cn'>
+<head>
+<meta charset='utf-8'>
+<!-- <meta name="viewport" content="width=1240, initial-scale=0.5, maximum-scale=1.0, user-scalable=0"> -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimal-ui">
+<link rel="stylesheet" href="css/bootstrap.min.css" >
+<link rel='stylesheet' type='text/css' href='css/login.css'>
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<link href="css/sweetalert.css" rel="stylesheet">
+<!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> -->
+<title>华北电力大学学生选课系统</title>
+</head>
+<body>
+    <div class="jumbotron">
+        <img src='images/main.jpg'/>
+    </div>
+    <div id='signup_full'>
+        <div id='signup_page'>
+            <h1>华北电力大学选课系统</h1>
+            <h2>教师登录</h2>
+            <input type="password" name="password1"  style="display:none"/>
+            <input id='id' type="text" class="form-control input-lg" name="id" value="" autocomplete="off" placeholder="教工号" >
+            <input id='password' type="password" class="form-control input-lg" name="password" value="" autocomplete="off"  placeholder="密码">
+            <div class='clear'></div>
+            <div id='forget_statement'>
+                <p id='forget_p'> <a href='#'>忘记密码?</a></p>
+            </div>
+            <button id='denglu_success' type="submit" class="btn btn-success btn-lg btn-block" role="button"><b>登录</b></button>
+            <div class="clear"></div>
+        </div>
+    </div>
+<script src='jq/jquery-3.1.1.min.js'></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/sweetalert.min.js"></script>
+<script src="js/index.js"></script>
+
+
+<script>
+
+	$("#denglu_success").click(function () {
+		if($('#id').val()==''){
+			swal({
+				title: "Error!",
+				text: "请输入教工号",
+				type: "error",
+				confirmButtonText: "Cool"
+			});
+		}else if($('#password').val()==''){
+			swal({
+				title: "Error!",
+				text: "请输入密码",
+				type: "error",
+				confirmButtonText: "Cool"
+			});
+		}else{
+            //用ajax提交表单
+            $.post('/do_teacher_denglu',{
+                'id':$('#id').val(),
+                'password':$('#password').val()
+            },function(result){
+                if(result=='1'){
+                    swal("恭喜!", "登录成功!", "success");
+                    $('.confirm').click(function(){
+                        window.location.href = "/teacher_course";
+                    })
+                }else if(result=='-2'){
+                    swal({
+				        title: "Error!",
+				        text: "密码错误",
+				        type: "error",
+				        confirmButtonText: "Cool"
+                    });
+                }else if(result=='-1'){
+                    swal({
+				        title: "Error!",
+				        text: "没有该用户",
+				        type: "error",
+				        confirmButtonText: "Cool"
+                    });
+                }
+            })
+        }
+	});
+
+
+</script>
+
+
+</body>
+</html>
+
+

@@ -1,0 +1,125 @@
+*,body{
+	margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    background: transparent;
+    list-style: none;
+	text-decoration:none;
+	font:arial,"Microsoft YaHei";
+    font-family: "Raleway", sans-serif;
+}
+.clear{
+    clear: both;
+}
+a:visited{text-decoration: none;} 
+a:hover {text-decoration: none;}
+a:active{text-decoration:none;}
+
+.jumbotron{
+    position: relative;
+    padding:0;
+    margin: 0;
+}
+.jumbotron img{
+    width:100%;
+    height:100%;
+}
+#topic{
+    z-index:10000000;
+    text-align: center;
+    font-size:58px;
+    font-weight: 800;
+    color:rgb(252,251,251);
+    padding-top:100px;
+    position: absolute;
+    top:120px;
+    left:calc(50% - 348px);
+}
+.roll-mask{
+    width:120px;
+    height: 45px;
+    background-color:rgb(51,122,183);
+    border:solid 1px rgb(51,122,183);
+    opacity: 1; 
+    -webkit-border-radius: 16px;
+    -moz-border-radius: 16px;
+    -o-border-radius: 16px;
+    border-radius: 16px;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -ms-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+}
+.roll-button {
+    height:45px;
+    line-height: 45px;
+    text-align: center;
+    display: block;
+    font-family: "Raleway", sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -ms-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+}
+.roll-mask:hover{
+    background-color:rgba(51,122,183,0);
+}
+.roll-mask:hover a{
+    color:rgb(51,122,183);
+}
+#student_login{
+    position: absolute;
+    top:650px;
+    left:calc(50% - 436px);
+}
+#student_signup{
+    position: absolute;
+    top:650px;
+    left:calc(50% - 318px);
+}
+#teacher_login{
+    position: absolute;
+    top:650px;
+    left:calc(50% - 118px);
+}
+#teacher_signup{
+    position: absolute;
+    top:650px;
+    left:calc(50% - 0px);
+}
+#admin_login{
+    position: absolute;
+    top:650px;
+    left:calc(50% + 200px);
+}
+#admin_signup{
+    position: absolute;
+    top:650px;
+    left:calc(50% + 320px);
+}
+
+
+
+
+
+
+
+
+
+
+
+@media (min-width: 768px)and(max-width: 992px){
+
+}
+@media (min-width: 992px)and(max-width: 1200px){
+
+}
+@media (min-width: 1200px){
+
+}

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang='zh-cn'>
+<head>
+<meta charset='utf-8'>
+<!-- <meta name="viewport" content="width=1240, initial-scale=0.5, maximum-scale=1.0, user-scalable=0"> -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimal-ui">
+<link rel="stylesheet" href="css/bootstrap.min.css" >
+<link rel='stylesheet' type='text/css' href='css/admin.css'>
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<link href="css/sweetalert.css" rel="stylesheet">
+<!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> -->
+<title>华北电力大学学生选课系统</title>
+</head>
+<body>
+    <div class="jumbotron">
+        <img src='images/main.jpg'/>
+    </div>
+    <div id='main_full'>
+        <div id='main_page'>
+            <div id='left_list'>
+                <div class="list-group">
+                    <a href="/admin_course" class="list-group-item list-group-item-success">课程号查询</a>
+                    <a href="/admin_student" class="list-group-item list-group-item-success">学号查询</a>
+                    <a href="/admin_insert_teacher" class="list-group-item list-group-item-info">添加教师</a>
+                    <a href="/admin_insert_course" class="list-group-item list-group-item-info">添加课程</a>
+                    <a href="/admin_delete_course" class="list-group-item list-group-item-warning">删除课程</a>
+                    <a href="/admin_xinxixiugai" class="list-group-item list-group-item-warning">修改个人信息</a>
+                    <a href="/" class="list-group-item list-group-item-danger">退出登录</a>
+                </div>
+            </div>
+            <div id='xuanke_page'>
+                <div class="clear"></div>
+                    <input id='student_id' type="text" class="form-control input-lg" name="class_id" value="" placeholder="请输入学生的学号">
+                    <button id='chaxun_course' type="submit" class="btn btn-success btn-lg btn-block" role="button"><b>查询</b></button>
+            </div>
+            <table id='kecheng_yixuan' class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>课程号</th>
+                            <th>课程名</th>
+                            <th>学分</th>
+                            <th>上课时间</th>
+                            <th>上课教室</th>
+                            <th>上课教师</th>
+                            <th>已选学生</th>
+                            <th>分数</th>
+                            <th> </th>
+                        </tr>
+                    </thead>
+                    <tbody id='student_all_course'>
+                    </tbody>
+                </table>
+        </div>
+    </div>
+<script src='jq/jquery-3.1.1.min.js'></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/sweetalert.min.js"></script>
+<script src="js/index.js"></script>
+<script src='js/underscore-noflect.js'></script>
+
+<script type="text/template" id="student_course">
+        <tr>
+            <td>{{= class_id    }}</td>
+            <td>{{= class_name  }}</td>
+            <td>{{= class_score }}</td>
+            <td>{{= class_time  }}</td>
+            <td>{{= class_room  }}</td>
+            <td>{{= class_teacher  }}</td>
+            <td>{{= name  }}</td>
+            <td>{{= score  }}</td>
+            <td><i id='shanchu_student' class="fa fa-times" aria-hidden="true"></i></td>
+         </tr>
+
+         
+    
+</script>
+
+<script>
+    //用来记录是否重复输出
+    var old_course=[];
+
+    var student_all_course = $('#student_all_course');
+    //得到模板
+    var compiled = _.template($("#student_course").html());
+
+    const get_student_course=()=>{
+        let id=$('#student_id').val();
+        $.post('/admin_chaxun_student',{
+            'id':id
+        },function(result){
+            for(var i = 0; i<result.allResult.length; i++){
+                var htmlstring = compiled(result.allResult[i]);
+                student_all_course.append(htmlstring);
+            }
+        })
+    }
+
+    $('#chaxun_course').click(function(){
+        var id=$('#student_id').val();
+        for(let i=0;i<old_course.length;i++){
+            if(old_course[i]===id){
+                var repeat=1;
+            }
+        }
+        if(repeat===1){
+            swal({
+                title: "Error!",
+                text: "该学生已显示",
+                type: "error",
+                onfirmButtonText: "Cool"
+            });
+        }else if(id==''){
+            swal({
+				title: "Error!",
+				text: "请输入学生的学号",
+				type: "error",
+				confirmButtonText: "Cool"
+			});
+        }else{
+            //先得到所有课程号，循环匹配所输入的课程号，如果存在，那么再插入
+            $.post('/get_all_student',function (result) {
+                for(var i = 0; i<result.allResult.length; i++){
+                    if(id==result.allResult[i].id){
+                        get_student_course();
+                        old_course.push(id);
+                        var course_exist=1;
+                    }
+                }
+                if(course_exist!=1){
+                    swal({
+                        title: "Error!",
+                        text: "学生不存在",
+                        type: "error",
+                        confirmButtonText: "Cool"
+                    });
+                }
+            });
+        }
+    })
+
+    $('#kecheng_yixuan').on("click","#shanchu_student", function() {
+        let class_id=$(this).parent().prevAll('td:last').html();
+        let name=$(this).parent().prevAll('td:first').html();
+        $.post('/teacher_delete_student',{
+            'class_id':class_id,
+            'name':name
+        },function(result){
+            if(result==1){
+                swal("恭喜!", "删除成功!", "success");
+                $('.confirm').click(function(){
+                    window.location.href = "/admin_student";
+                })
+            }
+        })
+    })
+
+    //清除session
+    $('.list-group-item-danger').click(function(){
+        $.post('/clear_session')
+    })
+</script>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang='zh-cn'>
+<head>
+<meta charset='utf-8'>
+<!-- <meta name="viewport" content="width=1240, initial-scale=0.5, maximum-scale=1.0, user-scalable=0"> -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimal-ui">
+<link rel="stylesheet" href="css/bootstrap.min.css" >
+<link rel='stylesheet' type='text/css' href='css/admin.css'>
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<link href="css/sweetalert.css" rel="stylesheet">
+<!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> -->
+<title>华北电力大学学生选课系统</title>
+</head>
+<body>
+    <div class="jumbotron">
+        <img src='images/main.jpg'/>
+    </div>
+    <div id='main_full'>
+        <div id='main_page'>
+            <div id='left_list'>
+                <div class="list-group">
+                    <a href="/admin_course" class="list-group-item list-group-item-success">课程号查询</a>
+                    <a href="/admin_student" class="list-group-item list-group-item-success">学号查询</a>
+                    <a href="/admin_insert_teacher" class="list-group-item list-group-item-info">添加教师</a>
+                    <a href="/admin_insert_course" class="list-group-item list-group-item-info">添加课程</a>
+                    <a href="/admin_delete_course" class="list-group-item list-group-item-warning">删除课程</a>
+                    <a href="/admin_xinxixiugai" class="list-group-item list-group-item-warning">修改个人信息</a>
+                    <a href="/" class="list-group-item list-group-item-danger">退出登录</a>
+                </div>
+            </div>
+            <div id='self_xiugai_page'>
+                    <div class="clear"></div>
+                    <span>账号</span><input id='id' type="text" class="form-control input-lg" name="id" disabled="true" value="" placeholder="管理员账号" >
+                    <span>密码</span><input id='password' type="text" class="form-control input-lg" name="password" value="" placeholder="密码">
+                    <button id='save_success' type="submit" class="btn btn-success btn-lg btn-block" role="button"><b>保存</b></button>
+            </div>
+
+        </div>
+    </div>
+<script src='jq/jquery-3.1.1.min.js'></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/sweetalert.min.js"></script>
+<script src="js/index.js"></script>
+<script src='js/underscore-noflect.js'></script>
+
+
+<script>
+
+    $.post('/admin_search_by_session',function(result){
+        $('#id').val(result[0].id);
+        $('#password').val(result[0].password);
+    })
+
+    $('#save_success').click(function(){
+        $.post('/admin_xinxigengxin',{
+            'id':$('#id').val(),
+            "password" : $("#password").val()
+        },function(result){
+            if(result==1){
+                swal("恭喜!", "信息修改成功!", "success");
+                $('.confirm').click(function(){
+                    window.location.href = "/admin_xinxixiugai";
+                })
+            }
+        })
+    })
+
+    //清除session
+    $('.list-group-item-danger').click(function(){
+        $.post('/clear_session')
+    })
+</script>
+
+</body>
+</html>
